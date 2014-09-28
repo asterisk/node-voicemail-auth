@@ -1,6 +1,6 @@
-# Asterisk Voicemail Authentication/Authorization Interface
+# Asterisk Voicemail Authentication Interface
 
-Authentication/Authorization interface for Asterisk voicemail. This module supports authenticating and authorizing users.
+Authentication module for Asterisk voicemail. This module supports authenticating and authorizing users.
 
 # Installation
 
@@ -19,6 +19,63 @@ or add the following the your package.json file
 ```
 
 # Usage
+
+Create an authenticator:
+
+```JavaScript
+var dal; // voicemail data access layer instance
+var prompt = {
+  intro: [{
+    sound: 'sound:vm-intro',
+    skipable: false,
+    postSilence: 1
+  }]
+};
+var promptHelper; // voicemail prompt instance
+var auth = require('voicemail-auth')(dal, prompts, promptHelper);
+var channel; // channel instance
+
+var authenticator = auth.create(channel);
+
+// initialize with domain/mailbox number
+authenticator.init('domain.com', '1234')
+  .then(function(objects) {
+    var context = objects[0]; // context instance
+    var mailbox = objects[1]; // mailbox instance
+  })
+  .catch(function (err) {
+    err.name; // 'ContextNotFound' or 'MailboxNotFound'
+  });
+```
+
+For more information on voicemail data access layer, see [voicemail-data](http://github.com/asterisk/node-voicemail-data). For more information on voicemail prompt, see [voicemail-prompt](http://github.com/asterisk/node-voicemail-prompt).
+
+Set mailbox number for authentication:
+
+```JavaScript
+authenticator.setMailbox('1234')
+  .then(function(objects) {
+    var context = objects[0]; // context instance
+    var mailbox = objects[1]; // mailbox instance
+  })
+  .catch(function(err) {
+    err.name; // 'MailboxNotFound'
+  });
+```
+
+Attempt to authenticate:
+
+```JavaScript
+authenticator.authenticate('password');
+  .then(function() {
+    // authenticated
+  })
+  .catch(function(err) {
+    err.name; // 'InvalidPassword'
+  });
+```
+
+Note: this module does not currently handle playing authentication related prompts.
 
 # Development
 
