@@ -56,7 +56,8 @@ var getMockDal = function() {
           setTimeout(function() {
             deferred.resolve({
               mailboxNumber: number,
-              password: 'mypassword'
+              password: 'mypassword',
+              getContext: function() {return context;}
             });
           }, asyncDelay);
         }
@@ -79,9 +80,7 @@ describe('auth', function() {
 
   before(function(done) {
     var dal = getMockDal();
-    var prompts = {};
-    var promptHelper = {};
-    auth = require('../lib/auth.js')(dal, prompts, promptHelper);
+    auth = require('../lib/auth.js')({dal: dal});
 
     done();
   });
@@ -93,11 +92,9 @@ describe('auth', function() {
     var number = '1234';
 
     authenticator.init(domain, number)
-      .then(function(objects) {
-        var context = objects[0];
-        var mailbox = objects[1];
+      .then(function(mailbox) {
 
-        assert(context.domain === domain);
+        assert(mailbox.getContext().domain === domain);
         assert(mailbox.mailboxNumber === number);
 
         done();
@@ -144,11 +141,9 @@ describe('auth', function() {
         assert(err.name === 'MailboxNotFound');
 
         authenticator.setMailbox(number)
-          .then(function(objects) {
-            var context = objects[0];
-            var mailbox = objects[1];
+          .then(function(mailbox) {
 
-            assert(context.domain === domain);
+            assert(mailbox.getContext().domain === domain);
             assert(mailbox.mailboxNumber === number);
 
             done();
@@ -185,11 +180,9 @@ describe('auth', function() {
     var password = 'mypassword';
 
     authenticator.init(domain, number)
-      .then(function(objects) {
-        var context = objects[0];
-        var mailbox = objects[1];
+      .then(function(mailbox) {
 
-        assert(context.domain === domain);
+        assert(mailbox.getContext().domain === domain);
         assert(mailbox.mailboxNumber === number);
 
         return authenticator.authenticate(password);
@@ -208,11 +201,9 @@ describe('auth', function() {
     var password = 'notmypassword';
 
     authenticator.init(domain, number)
-      .then(function(objects) {
-        var context = objects[0];
-        var mailbox = objects[1];
+      .then(function(mailbox) {
 
-        assert(context.domain === domain);
+        assert(mailbox.getContext().domain === domain);
         assert(mailbox.mailboxNumber === number);
 
         return authenticator.authenticate(password);
@@ -233,11 +224,9 @@ describe('auth', function() {
     var password = 'mypassword';
 
     authenticator.init(domain, number)
-      .then(function(objects) {
-        var context = objects[0];
-        var mailbox = objects[1];
+      .then(function(mailbox) {
 
-        assert(context.domain === domain);
+        assert(mailbox.getContext().domain === domain);
         assert(mailbox.mailboxNumber === number);
 
         var promise =  authenticator.authenticate(password);
