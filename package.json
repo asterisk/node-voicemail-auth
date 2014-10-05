@@ -1,6 +1,6 @@
 {
   "name": "voicemail-auth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Authentication/Authorization interface for Asterisk voicemail.",
   "main": "lib/auth.js",
   "private": true,
