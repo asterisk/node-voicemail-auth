@@ -24,39 +24,35 @@ Create an authenticator:
 
 ```JavaScript
 var dal; // voicemail data access layer instance
-var prompt = {
-  intro: [{
-    sound: 'sound:vm-intro',
-    skipable: false,
-    postSilence: 1
-  }]
-};
 var promptHelper; // voicemail prompt instance
-var auth = require('voicemail-auth')(dal, prompts, promptHelper);
+var config; // voicemail config instance
+var auth = require('voicemail-auth')({
+  dal: dal,
+  prompt: promptHelper,
+  config, config
+});
 var channel; // channel instance
 
 var authenticator = auth.create(channel);
 
 // initialize with domain/mailbox number
 authenticator.init('domain.com', '1234')
-  .then(function(objects) {
-    var context = objects[0]; // context instance
-    var mailbox = objects[1]; // mailbox instance
+  .then(function(mailbox) {
+    // use mailbox instance...
   })
   .catch(function (err) {
     err.name; // 'ContextNotFound' or 'MailboxNotFound'
   });
 ```
 
-For more information on voicemail data access layer, see [voicemail-data](http://github.com/asterisk/node-voicemail-data). For more information on voicemail prompt, see [voicemail-prompt](http://github.com/asterisk/node-voicemail-prompt).
+For more information on voicemail data access layer, see [voicemail-data](http://github.com/asterisk/node-voicemail-data). For more information on voicemail prompt, see [voicemail-prompt](http://github.com/asterisk/node-voicemail-prompt). For more information on voicemail config, see [voicemail-config](http://github.com/asterisk/node-voicemail-config)
 
 Set mailbox number for authentication:
 
 ```JavaScript
 authenticator.setMailbox('1234')
-  .then(function(objects) {
-    var context = objects[0]; // context instance
-    var mailbox = objects[1]; // mailbox instance
+  .then(function(mailbox) {
+    // use mailbox instance...
   })
   .catch(function(err) {
     err.name; // 'MailboxNotFound'
