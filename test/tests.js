@@ -70,6 +70,66 @@ var getMockDal = function() {
   return dal;
 };
 
+/*
+ * Returns a mock config for testing.
+ **/
+var getMockConfig = function() {
+  return {
+    getAppConfig: function() {
+      return {
+        prompts: {
+          auth: {
+            password: [{
+              sound: '',
+              skipable: false,
+              postSilence: 1
+            }],
+
+            invalidPassword: [{
+              sound: '',
+              skipable: false,
+              postSilence: 1
+            }]
+          }
+        }
+      };
+    }
+  };
+};
+
+/**
+ * Returns a mock prompt for testing.
+ */
+var getMockPrompt = function() {
+  var promptHelper = {
+    create: function(sounds, channel) {
+      if (!sounds || !channel) {
+        throw new Error('missing arguments');
+      }
+
+      return {
+        play: function() {
+          var innerDeferred = Q.defer();
+
+          setTimeout(function() {
+            innerDeferred.resolve(true);
+          }, asyncDelay);
+
+          return innerDeferred.promise;
+        },
+
+        stop: function() {
+        }
+      };
+    }
+  };
+
+  return promptHelper;
+};
+
+/**
+ * Returns a mock channel for testing.
+ */
 var getMockChannel = function() {
   return new EventEmitter();
 };
@@ -80,7 +140,13 @@ describe('auth', function() {
 
   before(function(done) {
     var dal = getMockDal();
-    auth = require('../lib/auth.js')({dal: dal});
+    var config = getMockConfig();
+    var prompt = getMockPrompt();
+    auth = require('../lib/auth.js')({
+      dal: dal,
+      config: config,
+      prompt: prompt
+    });
 
     done();
   });
