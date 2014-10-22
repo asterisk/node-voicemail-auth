@@ -102,6 +102,22 @@ describe('auth', function() {
       .done();
   });
 
+  it('should support skipping authentication', function(done) {
+    var channel = getMockChannel();
+    var authenticator = auth.create(channel, true);
+    var domain = 'mydomain.com';
+    var number = '1234';
+    var password = 'wrongpassword';
+
+    authenticator.init(domain, number)
+      .then(function(mailbox) {
+        return authenticator.authenticate(password);
+      })
+      .done(function() {
+        done();
+      });
+  });
+
   it('should throw error for unknown context', function(done) {
     var channel = getMockChannel();
     var authenticator = auth.create(channel);

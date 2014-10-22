@@ -71,6 +71,14 @@ authenticator.authenticate('password');
   });
 ```
 
+To allow authentication to be skipped (for leaving a message for example):
+
+```JavaScript
+var authenticator = auth.create(channel, true);
+```
+
+You can still call authenticate on the resulting authenticator but it will simply resolve the promise without actually validating the password given against the mailbox.
+
 Note: this module does not currently handle playing authentication related prompts.
 
 # Development
