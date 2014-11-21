@@ -29,7 +29,8 @@ var config; // voicemail config instance
 var auth = require('voicemail-auth')({
   dal: dal,
   prompt: promptHelper,
-  config, config
+  config, config,
+  logger: logger // voicemail logging
 });
 var channel; // channel instance
 

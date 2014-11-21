@@ -134,6 +134,27 @@ var getMockChannel = function() {
   return new EventEmitter();
 };
 
+/**
+ * Returns a mock logger for testing.
+ */
+var getMockLogger = function() {
+  return {
+    child: function() {
+      return {
+        trace: function() {},
+        debug: function() {},
+        info: function() {},
+        warn: function() {},
+        error: function() {},
+        fatal: function() {},
+        child: function() {
+          return this;
+        }
+      };
+    }
+  };
+};
+
 var auth;
 
 describe('auth', function() {
@@ -142,10 +163,12 @@ describe('auth', function() {
     var dal = getMockDal();
     var config = getMockConfig();
     var prompt = getMockPrompt();
+    var logger = getMockLogger();
     auth = require('../lib/auth.js')({
       dal: dal,
       config: config,
-      prompt: prompt
+      prompt: prompt,
+      logger: logger
     });
 
     done();
